@@ -73,3 +73,13 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+### Image Screen shots
+
+List Page
+
+![List Page](img/list.png "List Page")
+
+Edit Page
+
+![Edit Page](img/edit.png "Edit Page")
