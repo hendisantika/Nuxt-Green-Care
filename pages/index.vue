@@ -2,26 +2,27 @@
   <div class="container">
     <h1>Top Page</h1>
 
-    <!-- form追加 -->
+    <!-- Add form -->
     <form>
       <div class="mb-3">
         <label class="form-label" for="exampleInputName1">Name</label>
         <input
-            id="exampleInputName1"
             v-model="plant"
+            type="text"
+            id="exampleInputName1"
             aria-describedby="nameHelp"
             class="form-control"
-            type="text"
         />
       </div>
       <button
-          class="btn btn-primary"
           type="submit"
+          class="btn btn-primary"
           @click.prevent="addPlant(plant)"
       >
         Add Name
       </button>
     </form>
+
 
     <table class="table">
       <thead>
