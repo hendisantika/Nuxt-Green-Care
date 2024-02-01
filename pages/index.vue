@@ -2,7 +2,55 @@
   <div class="container">
     <h1>Top Page</h1>
 
-    <!-- アラート追加 -->
+    <!-- PlantsModal 追加 -->
+    <div
+        id="exampleModal"
+        aria-hidden="true"
+        aria-labelledby="exampleModalLabel"
+        class="modal fade"
+        tabindex="-1"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="exampleModalLabel" class="modal-title">Edit Plant</h5>
+            <button
+                aria-label="Close"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                type="button"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input
+                id="exampleInputName1"
+                v-model="editedPlant.name"
+                aria-describedby="nameHelp"
+                class="form-control"
+                type="text"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+                type="button"
+            >
+              Close
+            </button>
+            <button
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                type="button"
+                @click="editPlant(editedPlant)"
+            >
+              Save changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
         v-if="error"
         class="alert alert-danger alert-dismissible fade show"
@@ -52,13 +100,26 @@
         <th scope="row">{{ index + 1 }}</th>
         <td>{{ plant.name }}</td>
         <td>
-          <button class="btn btn-warning btn-sm" type="button">Edit</button>
+          <!-- 追加 -->
+          <button
+              class="btn btn-warning btn-sm"
+              data-bs-target="#exampleModal"
+              data-bs-toggle="modal"
+              type="button"
+              @click="
+                {
+                  editedPlant.id = plant.id;
+                  editedPlant.name = plant.name;
+                }
+              "
+          >
+            Edit
+          </button>
         </td>
         <td>
-          <!-- クリックイベント追加 -->
           <button
-              class="btn btn-danger btn-sm"
               type="button"
+              class="btn btn-danger btn-sm"
               @click="deletePlant(plant.id)"
           >
             Delete
@@ -71,10 +132,16 @@
 </template>
 
 <script setup>
-import {H3Error} from "h3"; // 追加
+import {H3Error} from "h3";
+
 const plants = ref(null);
 const plant = ref(null);
-const error = ref(null); // 追加
+const error = ref(null);
+// 追加
+const editedPlant = ref({
+  id: null,
+  name: null,
+});
 plants.value = await getPlants();
 
 // Get plants
@@ -96,8 +163,24 @@ async function addPlant(plant) {
   if (addedPlant) plants.value = await getPlants();
 }
 
+// Edit plant 追加
+async function editPlant(editedPlant) {
+  let plant = null;
+
+  if (editedPlant.id && editedPlant.name)
+    plant = await $fetch("/api/plants", {
+      method: "PUT",
+      body: {
+        id: editedPlant.id,
+        name: editedPlant.name,
+      },
+    });
+
+  if (plant) plants.value = await getPlants();
+}
+
 // Delete plant
-async function deletePlant(id) { // 追加
+async function deletePlant(id) {
   let deletePlantOrError = null;
   if (id)
     deletePlantOrError = await $fetch("/api/plants", {
