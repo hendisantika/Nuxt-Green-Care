@@ -2,16 +2,31 @@
   <div class="container">
     <h1>Top Page</h1>
 
-    <!-- Add form -->
+    <!-- アラート追加 -->
+    <div
+        v-if="error"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+    >
+      <strong>Error:</strong> Delete Error
+      <button
+          aria-label="Close"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          type="button"
+          @click="error = null"
+      ></button>
+    </div>
+
     <form>
       <div class="mb-3">
         <label class="form-label" for="exampleInputName1">Name</label>
         <input
             v-model="plant"
             type="text"
+            class="form-control"
             id="exampleInputName1"
             aria-describedby="nameHelp"
-            class="form-control"
         />
       </div>
       <button
@@ -22,7 +37,6 @@
         Add Name
       </button>
     </form>
-
 
     <table class="table">
       <thead>
@@ -41,7 +55,14 @@
           <button class="btn btn-warning btn-sm" type="button">Edit</button>
         </td>
         <td>
-          <button class="btn btn-danger btn-sm" type="button">Delete</button>
+          <!-- クリックイベント追加 -->
+          <button
+              class="btn btn-danger btn-sm"
+              type="button"
+              @click="deletePlant(plant.id)"
+          >
+            Delete
+          </button>
         </td>
       </tr>
       </tbody>
@@ -50,8 +71,10 @@
 </template>
 
 <script setup>
+import {H3Error} from "h3"; // 追加
 const plants = ref(null);
-const plant = ref(null); //追加
+const plant = ref(null);
+const error = ref(null); // 追加
 plants.value = await getPlants();
 
 // Get plants
@@ -59,9 +82,8 @@ async function getPlants() {
   return await $fetch("/api/plants");
 }
 
-// Add plants
-async function addPlant(plant) { //追加
-
+// Add plant
+async function addPlant(plant) {
   let addedPlant = null;
   if (plant)
     addedPlant = await $fetch("/api/plants", {
@@ -72,6 +94,25 @@ async function addPlant(plant) { //追加
     });
 
   if (addedPlant) plants.value = await getPlants();
+}
+
+// Delete plant
+async function deletePlant(id) { // 追加
+  let deletePlantOrError = null;
+  if (id)
+    deletePlantOrError = await $fetch("/api/plants", {
+      method: "DELETE",
+      body: {
+        id: id,
+      },
+    });
+
+  if (deletePlantOrError instanceof H3Error) {
+    error.value = deletePlantOrError;
+    return;
+  }
+
+  plants.value = await getPlants();
 }
 
 useHead({
