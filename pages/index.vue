@@ -1,6 +1,28 @@
 <template>
   <div class="container">
     <h1>Top Page</h1>
+
+    <!-- form追加 -->
+    <form>
+      <div class="mb-3">
+        <label class="form-label" for="exampleInputName1">Name</label>
+        <input
+            id="exampleInputName1"
+            v-model="plant"
+            aria-describedby="nameHelp"
+            class="form-control"
+            type="text"
+        />
+      </div>
+      <button
+          class="btn btn-primary"
+          type="submit"
+          @click.prevent="addPlant(plant)"
+      >
+        Add Name
+      </button>
+    </form>
+
     <table class="table">
       <thead>
       <tr>
@@ -28,11 +50,27 @@
 
 <script setup>
 const plants = ref(null);
+const plant = ref(null); //追加
 plants.value = await getPlants();
 
 // Get plants
 async function getPlants() {
   return await $fetch("/api/plants");
+}
+
+// Add plants
+async function addPlant(plant) { //追加
+
+  let addedPlant = null;
+  if (plant)
+    addedPlant = await $fetch("/api/plants", {
+      method: "POST",
+      body: {
+        name: plant,
+      },
+    });
+
+  if (addedPlant) plants.value = await getPlants();
 }
 
 useHead({
