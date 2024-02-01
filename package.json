@@ -7,16 +7,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare && prisma generate",
+    "prisma": "prisma"
   },
   "devDependencies": {
     "npm-check-updates": "^16.14.14",
+    "@nuxt/nitro": "^0.10.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20",
     "nuxt": "^3.10.0",
     "vue": "^3.4.15",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "sass": "^1.70.0",
+    "sass-loader": "14"
   },
   "dependencies": {
     "@prisma/client": "5.9.0",
-    "prisma": "^5.9.0"
+    "prisma": "^5.9.0",
+    "mysql2": "^3.9.1"
   }
 }
